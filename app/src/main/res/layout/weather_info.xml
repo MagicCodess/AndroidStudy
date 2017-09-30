@@ -83,6 +83,7 @@
                 android:layout_marginLeft="15.0dip"
                 android:singleLine="true"
                 android:text="北京"
+                android:textStyle="bold"
                 android:textColor="@android:color/white"
                 android:textSize="40.0sp" />
             <!-- 发布时间 -->
@@ -179,7 +180,9 @@
                     android:gravity="center"
                     android:singleLine="true"
                     android:text="重度污染"
-                    android:textColor="@android:color/white"
+                    android:textStyle="italic"
+                    android:typeface="sans"
+                    android:textColor="@android:color/holo_red_dark"
                     android:textSize="20.0sp" />
             </LinearLayout>
             <!-- 今日天气信息块 -->
@@ -255,7 +258,31 @@
                     android:textSize="20.0sp" />
             </RelativeLayout>
         </RelativeLayout>
-        <!-- 六日天气信息 -->
-        <!-- 广告等信息 -->
+        <RelativeLayout
+            android:id="@+id/others"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <!-- 六日天气信息 -->
+            <RelativeLayout
+                android:id="@+id/weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </RelativeLayout>
+            <!-- 广告等信息 -->
+            <RelativeLayout
+                android:id="@+id/advertisement"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true">
+                <ImageView
+                    android:id="@+id/baidu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ad"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+        </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -20,7 +20,7 @@ import cn.edu.pku.zhangchenning.db.CityDB;
 public class MyApplication extends Application{
     private  static  final  String TAG="MyAPP";
     private static MyApplication mApplication;
-    private CityDB mCityDB;
+    public CityDB mCityDB;
     private List<City> mCityList;
 
     public void onCreate(){
@@ -37,7 +37,7 @@ public class MyApplication extends Application{
     private CityDB openCityDB() {
         String path = "/data"+ Environment.getDataDirectory().getAbsolutePath()
                 + File.separator + getPackageName()
-                + File.separator + "databases1"
+                + File.separator + "databases"
                 + File.separator
                 + CityDB.CITY_DB_NAME;
         File db = new File(path);
@@ -45,7 +45,7 @@ public class MyApplication extends Application{
         if (!db.exists()) {
             String pathfolder = "/data" + Environment.getDataDirectory().getAbsolutePath()
                     + File.separator + getPackageName()
-                    + File.separator + "databases1"
+                    + File.separator + "databases"
                     + File.separator;
             File dirFirstFolder = new File(pathfolder);
             if(!dirFirstFolder.exists()){

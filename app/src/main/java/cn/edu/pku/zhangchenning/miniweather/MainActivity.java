@@ -7,9 +7,21 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.iflytek.cloud.RecognizerResult;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechRecognizer;
+import com.iflytek.cloud.SpeechUtility;
+import com.iflytek.cloud.ui.RecognizerDialog;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
+
 import java.lang.String;
 
 import java.io.BufferedReader;
@@ -25,8 +37,10 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.net.HttpURLConnection;
+import java.util.List;
 
 import cn.edu.pku.zhangchenning.bean.TodayWeather;
+import cn.edu.pku.zhangchenning.db.CityDB;
 
 import static cn.edu.pku.zhangchenning.miniweather.R.drawable.base_action_bar_action_city;
 
@@ -38,6 +52,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private ImageView mUpdateBtn;
 
     private ImageView mCitySelect;
+
+    private EditText mCityName;
+
+    private String dictationResultStr = "[";
+
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv,pmQualityTv,temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
     private Handler mHandler = new Handler() {
@@ -64,6 +83,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mCitySelect=findViewById(R.id.title_city_manager);
         mCitySelect.setOnClickListener(this);
 
+        cityTv=findViewById(R.id.city);
+        cityTv.setOnClickListener(this);
+
+        mCityName=findViewById(R.id.city_name);
+
         networkStateTest();
 
         initView();
@@ -87,6 +111,75 @@ public class MainActivity extends Activity implements View.OnClickListener{
             startActivityForResult(i,1);
         }
 
+        if(view.getId()==R.id.city){
+            dictationResultStr = "[";
+            // 语音配置对象初始化
+            SpeechUtility.createUtility(MainActivity.this, SpeechConstant.APPID + "=59f97bec");
+
+            // 1.创建SpeechRecognizer对象，第2个参数：本地听写时传InitListener
+            SpeechRecognizer mIat = SpeechRecognizer.createRecognizer(MainActivity.this, null);
+            // 交互动画
+            RecognizerDialog iatDialog = new RecognizerDialog(MainActivity.this, null);
+            // 2.设置听写参数，详见《科大讯飞MSC API手册(Android)》SpeechConstant类
+            mIat.setParameter(SpeechConstant.DOMAIN, "iat"); // domain:域名
+            mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+            mIat.setParameter(SpeechConstant.ACCENT, "mandarin"); // mandarin:普通话
+
+            //3.开始听写
+            iatDialog.setListener(new RecognizerDialogListener() {
+
+                @Override
+                public void onResult(RecognizerResult results, boolean isLast) {
+                    // TODO 自动生成的方法存根
+                    Log.d("Result", results.getResultString());
+                    //contentTv.setText(results.getResultString());
+                    if (!isLast) {
+                        dictationResultStr += results.getResultString() + ",";
+                    } else {
+                        dictationResultStr += results.getResultString() + "]";
+                    }
+                    if (isLast) {
+                        // 解析Json列表字符串
+                        Gson gson = new Gson();
+                        List<DictationResult> dictationResultList = gson.fromJson(dictationResultStr,new TypeToken<List<DictationResult>>() {}.getType());
+                        String finalResult = "";
+                        for (int i = 0; i < dictationResultList.size() - 1; i++) {
+                            finalResult += dictationResultList.get(i).toString();
+                        }
+                        mCityName.setText(finalResult);
+
+                        //获取焦点
+                        mCityName.requestFocus();
+                        System.out.println(mCityName.getText().toString());
+                        MyApplication mApp=MyApplication.getInstance();
+                        String cityNumber;
+                        if ((cityNumber=mApp.mCityDB.getCityNumber(mCityName.getText().toString()))!=null){
+                            queryWeatherCode(cityNumber);
+                        }else{
+                            Toast.makeText(MainActivity.this, "Please Try Again！", Toast.LENGTH_LONG).show();
+                        }
+                        System.out.println(mApp.mCityDB.getCityNumber(mCityName.getText().toString()));
+                        //将光标定位到文字最后，以便修改
+                        mCityName.setSelection(finalResult.length());
+
+                        Log.d("From reall phone", finalResult);
+                    }
+                }
+
+                @Override
+                public void onError(SpeechError error) {
+                    // TODO 自动生成的方法存根
+                    error.getPlainDescription(true);
+                }
+            });
+            // 开始听写
+            //Log.d("DB","hahahah");
+            iatDialog.show();
+            //MyApplication mApp=MyApplication.getInstance();
+
+            //queryWeatherCode(mApp.mCityDB.getCityNumber(cityTv.getText().toString()));
+            //Toast.makeText(MainActivity.this, "网络OK！", Toast.LENGTH_LONG).show();
+        }
 
         if(view.getId()==R.id.title_update_btn){
             SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);

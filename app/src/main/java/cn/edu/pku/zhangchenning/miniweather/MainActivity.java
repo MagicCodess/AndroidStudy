@@ -57,6 +57,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     private String dictationResultStr = "[";
 
+    private MyApplication mApp;
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv,pmQualityTv,temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
     private Handler mHandler = new Handler() {
@@ -88,6 +89,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         mCityName=findViewById(R.id.city_name);
 
+        pmImg=findViewById(R.id.pm2_5_img);
+
         networkStateTest();
 
         initView();
@@ -108,6 +111,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public void onClick(View view){
         if(view.getId()==R.id.title_city_manager){
             Intent i=new Intent(this,SelectCity.class);
+            i.putExtra("city",cityTv.getText().toString());
+            i.putExtra("code",MyApplication.getInstance().mCityDB.getCityNumber(cityTv.getText().toString()));
             startActivityForResult(i,1);
         }
 
@@ -151,7 +156,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                         //获取焦点
                         mCityName.requestFocus();
                         System.out.println(mCityName.getText().toString());
-                        MyApplication mApp=MyApplication.getInstance();
+                        mApp=MyApplication.getInstance();
                         String cityNumber;
                         if ((cityNumber=mApp.mCityDB.getCityNumber(mCityName.getText().toString()))!=null){
                             queryWeatherCode(cityNumber);
@@ -182,14 +187,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
 
         if(view.getId()==R.id.title_update_btn){
-            SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
-            String cityCode = sharedPreferences.getString("main_city_code","101010100");
+            SharedPreferences preferences=getSharedPreferences("user", MODE_PRIVATE);
+            String cityCode=preferences.getString("cityCode", "101010100");
             //String cityCode = sharedPreferences.getString("main_city_code","101160101");
             Log.d("myWeather",cityCode);
             saveState(cityCode);
 
             if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
-                Log.d("myWeather", "网络OK");
+                //Log.d("myWeather", "网络OK");
                 queryWeatherCode(cityCode);
                 Toast.makeText(MainActivity.this, "网络OK！", Toast.LENGTH_LONG).show();
             } else {
@@ -207,7 +212,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             saveState(newCityCode);
 
             if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
-                Log.d("myWeather", "网络OK");
+                //Log.d("myWeather", "网络OK");
                 queryWeatherCode(newCityCode);
                 Toast.makeText(MainActivity.this, "网络OK！", Toast.LENGTH_LONG).show();
             } else {
@@ -388,19 +393,40 @@ public class MainActivity extends Activity implements View.OnClickListener{
     }
 
     void updateTodayWeather(TodayWeather todayWeather){
-        city_name_Tv.setText(todayWeather.getCity()+"天气");
-        cityTv.setText(todayWeather.getCity());
-        timeTv.setText(todayWeather.getUpdatetime()+ "发布");
-        humidityTv.setText("湿度："+todayWeather.getShidu());
-        pmDataTv.setText(todayWeather.getPm25());
-        pmQualityTv.setText(todayWeather.getQuality());
-        weekTv.setText(todayWeather.getDate());
-        temperatureTv.setText(todayWeather.getHigh()+"~"+todayWeather.getLow());
-        climateTv.setText(todayWeather.getType());
-        windTv.setText("风力:"+todayWeather.getFengli());
-        //weatherImg.setImageResource(R.drawable.biz_plugin_weather_baoyu);
-        setWeatherImg(todayWeather.getType());
-        Toast.makeText(MainActivity.this,"更新成功！",Toast.LENGTH_SHORT).show();
+        if (todayWeather.getHigh()!=null) {
+            city_name_Tv.setText(todayWeather.getCity() + "天气");
+            cityTv.setText(todayWeather.getCity());
+            timeTv.setText(todayWeather.getUpdatetime() + "发布");
+            humidityTv.setText("湿度：" + todayWeather.getShidu());
+            pmDataTv.setText(todayWeather.getPm25());
+            pmQualityTv.setText(todayWeather.getQuality());
+            weekTv.setText(todayWeather.getDate());
+            temperatureTv.setText(todayWeather.getHigh() + "~" + todayWeather.getLow());
+            climateTv.setText(todayWeather.getType());
+            windTv.setText("风力:" + todayWeather.getFengli());
+            //weatherImg.setImageResource(R.drawable.biz_plugin_weather_baoyu);
+            setWeatherImg(todayWeather.getType());
+            if(todayWeather.getPm25()!=null)
+            {
+                int pms=Integer.parseInt(todayWeather.getPm25());
+                if(pms<=50)
+                    pmImg.setImageResource(R.drawable.biz_plugin_weather_0_50);
+                else if(pms<=100)
+                    pmImg.setImageResource(R.drawable.biz_plugin_weather_51_100);
+                else if(pms<=150)
+                    pmImg.setImageResource(R.drawable.biz_plugin_weather_101_150);
+                else if(pms<=200)
+                    pmImg.setImageResource(R.drawable.biz_plugin_weather_151_200);
+                else if(pms<=300)
+                    pmImg.setImageResource(R.drawable.biz_plugin_weather_201_300);
+                else
+                    pmImg.setImageResource(R.drawable.biz_plugin_weather_greater_300);
+            }
+            Toast.makeText(MainActivity.this, "Update Successfully！", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(MainActivity.this, "No Weather Info of Selected City, Back to Beijing！", Toast.LENGTH_SHORT).show();
+            queryWeatherCode("101010100");
+        }
     }
 
 

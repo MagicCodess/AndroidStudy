@@ -2,6 +2,7 @@ package cn.edu.pku.zhangchenning.miniweather;
 
 import android.app.Application;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.util.Log;
 
 import java.io.File;
@@ -28,6 +29,9 @@ public class MyApplication extends Application{
         Log.d(TAG,"MyApplication->OnCreate");
         mApplication=this;
         mCityDB=openCityDB();
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        builder.detectFileUriExposure();
         initCityList();
     }
     public static MyApplication getInstance(){

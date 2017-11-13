@@ -8,7 +8,7 @@
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="45.0dip"
-        android:background="#ffcd2626"
+        android:background="#4B0082"
         android:gravity="center_vertical">
 
 
@@ -261,29 +261,39 @@
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/others"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <!-- 六日天气信息 -->
-            <RelativeLayout
-                android:id="@+id/weather"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-            </RelativeLayout>
-            <!-- 广告等信息 -->
-            <RelativeLayout
-                android:id="@+id/advertisement"
+            <android.support.v4.view.ViewPager
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_alignParentBottom="true">
-                <ImageView
-                    android:id="@+id/baidu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ad"
-                    android:layout_alignParentBottom="true"/>
-            </RelativeLayout>
+                android:layout_height="match_parent"
+                android:layout_marginBottom="40dp"
+                android:id="@+id/imaster_viewpager">
+
+            </android.support.v4.view.ViewPager>
+            <ImageView
+                android:id="@+id/percentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/banner_select0"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="10dp"/>
+
+            <!-- 广告等信息 -->
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/advertisement"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="60dp"-->
+                <!--android:layout_alignParentBottom="true">-->
+                <!--<ImageView-->
+                    <!--android:id="@+id/baidu"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_centerInParent="true"-->
+                    <!--android:src="@drawable/ad"-->
+                    <!--android:layout_alignParentBottom="true"/>-->
+            <!--</RelativeLayout>-->
         </RelativeLayout>
     </LinearLayout>
     <EditText

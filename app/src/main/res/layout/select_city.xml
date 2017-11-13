@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="45.0dip"
-        android:background="#ffcd2626"
+        android:background="#4B0082"
         android:id="@+id/title_top">
         <TextView
             android:id="@+id/title_name"
@@ -30,24 +30,34 @@
             android:background="#A71717"
             android:gravity="center" />
     </RelativeLayout>
-    <cn.edu.pku.zhangchenning.miniweather.ClearEditText
-        android:id="@+id/search_city"
-        android:layout_width="fill_parent"
+    <RelativeLayout
+        android:id="@+id/title_mid"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="4.0dp"
-        android:hint="Search City"
-        android:background="@drawable/contact_search_box_edittext_keyword_background"
-        android:drawablePadding="6dp"
-        android:textColor="#ff000000"
-        android:textColorHint="#ffcccccc"
-        android:textSize="15.0dip"
         android:layout_below="@+id/title_top"
-        android:drawableRight="@drawable/magnifying_glass"/>
+        android:background="#7A378B">
+        <cn.edu.pku.zhangchenning.miniweather.ClearEditText
+            android:id="@+id/search_city"
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_margin="4.0dp"
+            android:hint="Search City"
+            android:background="@drawable/contact_search_box_edittext_keyword_background"
+            android:drawablePadding="6dp"
+            android:textColor="#ff000000"
+            android:textColorHint="#000000"
+            android:textStyle="italic"
+            android:textAlignment="center"
+            android:textSize="15.0dip"
+
+            android:drawableRight="@drawable/magnifying_glass"/>
+    </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/search_city"
-        android:background="@drawable/pkupic">
+        android:layout_below="@+id/title_mid"
+        android:background="@drawable/zise3">
 
         <ListView
             android:layout_width="wrap_content"

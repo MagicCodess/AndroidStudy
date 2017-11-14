@@ -98,10 +98,13 @@ public class MainActivity extends Activity implements View.OnClickListener{
     ImageView mLocation;
     String city;
     String imagePath;
+
+    private static final int UPDATE_TODAY_WEATHER = 1;
     ///////////////////////////////////////////////////////////////////////////
     public LocationClient mLocationClient = null;
     private MyLocationListener myListener = new MyLocationListener();
     ////////////////////////////////////////////////////////////////////////////
+    //To receive the message from other threads
     private Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -113,9 +116,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         }
     };
-
-    private static final int UPDATE_TODAY_WEATHER = 1;
-
+    //onCreate function, loaded when MainActivity established.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,25 +157,24 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         viewPager = (ViewPager) findViewById(R.id.imaster_viewpager);      //banner位
         banner_top = (ImageView) findViewById(R.id.percentage);    //banner进度
-        banner_top.setImageResource(R.drawable.banner_select0);
-        mLocation.setOnClickListener(this);
+        banner_top.setImageResource(R.drawable.banner_select0);     //Set image
+        mLocation.setOnClickListener(this);     //Set click listener
         mTitleShare.setOnClickListener(this);
         ArrayList LayoutList = new ArrayList<>();
 
         LayoutList.add(view1);
         LayoutList.add(view2);
-
+        //Create BannerPagerAdapter instance, to realize slide view
         BannerPagerAdapter BPA = new BannerPagerAdapter(LayoutList);
-        viewPager.setAdapter(BPA);
-        viewPager.setCurrentItem(0);
-        //mHandler.sendEmptyMessageDelayed(0, 5000);               //当前延时5秒，最大600张
-
+        viewPager.setAdapter(BPA);              //Set Adapter
+        viewPager.setCurrentItem(0);            //Set the 0th item as the first one.
+        //Add page slide listener
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
-
+            //choose the View to be shown.
             @Override
             public void onPageSelected(int position) {
                 int tmp = position % 2;
@@ -194,13 +194,13 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         });
     }
-
+    //screenshot sub function
     private void screenshot() {
         // 获取屏幕
-        View dView = getWindow().getDecorView();
+        View dView = getWindow().getDecorView();    //get the screen view
         dView.setDrawingCacheEnabled(true);
         dView.buildDrawingCache();
-        Bitmap bmp = dView.getDrawingCache();
+        Bitmap bmp = dView.getDrawingCache();       //get the Bitmap data
         if (bmp != null)
         {
             try {
@@ -235,7 +235,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             System.out.println(city);
         }
     }
-
+    //Network State Test function
     void networkStateTest() {
         if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
             //Log.d("myWeather", "网络OK");
@@ -245,7 +245,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             Toast.makeText(MainActivity.this, "网络挂了！", Toast.LENGTH_LONG).show();
         }
     }
-
+    //choose different logic by view.getID()
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.title_city_manager) {
@@ -386,14 +386,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         }
     }
-
+    //loaded when returned from other activities
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode==1&&resultCode==RESULT_OK){
             viewPager.setCurrentItem(0);
             String newCityCode = data.getStringExtra("cityCode");
             //String cityCode = sharedPreferences.getString("main_city_code","101160101");
             Log.d("myWeather",newCityCode);
-            saveState(newCityCode);
+            saveState(newCityCode);//save citycode
 
             if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
                 //Log.d("myWeather", "网络OK");
@@ -405,7 +405,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         }
     }
-
+    //query weather data
     private void queryWeatherCode(String cityCode){
         final String address = "http://wthrcdn.etouch.cn/WeatherApi?citykey="+cityCode;
         Log.d("myWeather", address);
@@ -454,7 +454,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 }
         ).start();
     }
-
+    //parse XML data
     private TodayWeather parseXML(String xmldata) {
         TodayWeather todayWeather = null;
         int fengxiangCount = 0;
@@ -665,7 +665,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
         return todayWeather;
     }
-
+    //initial view
     void initView(){
         LayoutInflater layoutInflater2 = LayoutInflater.from(this);
         view1 = layoutInflater2.inflate(R.layout.viewpager, null);
@@ -750,7 +750,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         windTv7.setText("N/A");
         loadState();
     }
-
+    //update weather data
     void updateTodayWeather(TodayWeather todayWeather){
         if (todayWeather.getHigh()!=null) {
             city_name_Tv.setText(todayWeather.getCity() + "天气");
@@ -825,7 +825,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
     }
 
-
+    //update weather data
     void setWeatherImg(ImageView Img,String type){
         switch (type){
             case "暴雪":

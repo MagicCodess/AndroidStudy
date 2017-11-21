@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,10 +65,13 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.edu.pku.zhangchenning.bean.TodayWeather;
 import cn.edu.pku.zhangchenning.db.CityDB;
 
+import static android.R.attr.delay;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static cn.edu.pku.zhangchenning.miniweather.R.drawable.base_action_bar_action_city;
 
@@ -76,7 +80,8 @@ import static cn.edu.pku.zhangchenning.miniweather.R.drawable.base_action_bar_ac
  */
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private ImageView mUpdateBtn;
+    private ImageView mUpdateBtn2;
+    private ProgressBar mUpdateBtn;
 
     private ImageView mCitySelect;
 
@@ -100,6 +105,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     String imagePath;
 
     private static final int UPDATE_TODAY_WEATHER = 1;
+    private static final int UPDATE_TODAY_WEATHER_BUTTON = 2;
     ///////////////////////////////////////////////////////////////////////////
     public LocationClient mLocationClient = null;
     private MyLocationListener myListener = new MyLocationListener();
@@ -110,6 +116,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
             switch (msg.what) {
                 case UPDATE_TODAY_WEATHER:
                     updateTodayWeather((TodayWeather) msg.obj);
+                    break;
+                case UPDATE_TODAY_WEATHER_BUTTON:
+                    mUpdateBtn2.setVisibility(View.VISIBLE);
+                    mUpdateBtn.setVisibility(View.INVISIBLE);
                     break;
                 default:
                     break;
@@ -122,8 +132,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_info);
 
-        mUpdateBtn = findViewById(R.id.title_update_btn);
-        mUpdateBtn.setOnClickListener(this);
+        mUpdateBtn2 = findViewById(R.id.title_update_btn2);
+        mUpdateBtn=findViewById(R.id.title_update_btn);
+        mUpdateBtn.setVisibility(View.INVISIBLE);
+        mUpdateBtn2.setOnClickListener(this);
 
         mCitySelect = findViewById(R.id.title_city_manager);
         mCitySelect.setOnClickListener(this);
@@ -326,21 +338,36 @@ public class MainActivity extends Activity implements View.OnClickListener{
             //Toast.makeText(MainActivity.this, "网络OK！", Toast.LENGTH_LONG).show();
         }
 
-        if (view.getId() == R.id.title_update_btn) {
+        if (view.getId() == R.id.title_update_btn2) {
+            mUpdateBtn2.setVisibility(View.INVISIBLE);
+            mUpdateBtn.setVisibility(View.VISIBLE);
             SharedPreferences preferences = getSharedPreferences("user", MODE_PRIVATE);
-            String cityCode = preferences.getString("cityCode", "101010100");
+            final String cityCode = preferences.getString("cityCode", "101010100");
             //String cityCode = sharedPreferences.getString("main_city_code","101160101");
             Log.d("myWeather", cityCode);
             saveState(cityCode);
 
             if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
                 //Log.d("myWeather", "网络OK");
-                queryWeatherCode(cityCode);
-                //Toast.makeText(MainActivity.this, "网络OK！", Toast.LENGTH_LONG).show();
+                new Thread(){
+                    public void run(){
+                        try {
+                            queryWeatherCode(cityCode);
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Message msg =new Message();
+                        msg.what = UPDATE_TODAY_WEATHER_BUTTON;
+                        mHandler.sendMessage(msg);
+                    }
+                }.start();
+
             } else {
                 Log.d("myWeather", "网络挂了");
                 Toast.makeText(MainActivity.this, "网络挂了！", Toast.LENGTH_LONG).show();
             }
+            //mUpdateBtn.setVisibility(View.VISIBLE);
         }
         if (view.getId() == R.id.title_location) {
             Toast.makeText(MainActivity.this, "Locating...", Toast.LENGTH_LONG).show();

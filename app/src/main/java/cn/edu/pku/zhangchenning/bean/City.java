@@ -46,4 +46,5 @@ public class City {
         this.allPY = allPY;
         this.allFristPY = allFristPY;
     }
+    public String getFirstPY(){return firstPY;}
 }

@@ -32,6 +32,7 @@ public class SelectCity extends Activity implements View.OnClickListener{
     private TextView mTitleName;
     private ClearEditText mClearEditText;
     private String code;
+    private SideBar sideBar;
 
     final List<Map<String, Object>> filterDataList = new ArrayList<Map<String, Object>>();
     @Override
@@ -40,11 +41,50 @@ public class SelectCity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.select_city);
+        sideBar=findViewById(R.id.select_sidebar);
 
         initViews();
 
-    }
+        sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
+            @Override
+            public void onTouchingLetterChanged(String s) {
+                filterData2(s);
+            }
+        });
 
+    }
+    private void filterData2(String filterStr){
+        //filterDataList=new ArrayList<City>();
+
+        Log.d("Filter",filterStr);
+        List<City> data=MyApplication.getInstance().getCityList();
+        final List<Map<String, Object>> cityLists = new ArrayList<Map<String, Object>>();
+        if (TextUtils.isEmpty(filterStr)){
+            filterDataList.clear();
+            for (City city :data ) {
+                Map<String, Object> cityList = new HashMap<String, Object>();
+                String cityName = city.getCity();
+                cityList.put("city",cityName);
+                String cityCode=city.getNumber();
+                cityList.put("code",cityCode);
+                filterDataList.add(cityList);
+            }
+        }else{
+            filterDataList.clear();
+            for (City city :data ) {
+                Map<String, Object> cityList = new HashMap<String, Object>();
+                if (city.getFirstPY().indexOf(filterStr.toString())!=-1){
+                    String cityName = city.getCity();
+                    cityList.put("city",cityName);
+                    String cityCode=city.getNumber();
+                    cityList.put("code",cityCode);
+                    filterDataList.add(cityList);
+                }
+            }
+        }
+        SimpleAdapter cityList = new SimpleAdapter(this, filterDataList,R.layout.item, new String[] { "city", "code"},new int[] {R.id.city,R.id.code});
+        mlistView.setAdapter(cityList);
+    }
     private void filterData(String filterStr){
         //filterDataList=new ArrayList<City>();
 
@@ -151,4 +191,7 @@ public class SelectCity extends Activity implements View.OnClickListener{
                 break;
         }
     }
+
 }
+
+

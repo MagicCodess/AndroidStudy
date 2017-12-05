@@ -104,6 +104,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     String city;
     String imagePath;
 
+
+
     private static final int UPDATE_TODAY_WEATHER = 1;
     private static final int UPDATE_TODAY_WEATHER_BUTTON = 2;
     ///////////////////////////////////////////////////////////////////////////

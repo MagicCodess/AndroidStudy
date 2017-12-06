@@ -55,6 +55,12 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="BGy7iBVeOgnKFaGfHn0Vvd4Akv10hyCq" />
 
+        <service
+            android:name=".MyService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
         <!-- <provider -->
         <!-- android:name="android.support.v4.content.FileProvider" -->
         <!-- android:authorities="org.unreal.update" -->

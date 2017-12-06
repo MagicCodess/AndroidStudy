@@ -435,7 +435,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
     }
     //query weather data
-    private void queryWeatherCode(String cityCode){
+    public void queryWeatherCode(String cityCode){
         final String address = "http://wthrcdn.etouch.cn/WeatherApi?citykey="+cityCode;
         Log.d("myWeather", address);
         new Thread(
@@ -929,7 +929,15 @@ public class MainActivity extends Activity implements View.OnClickListener{
         queryWeatherCode(cityCode);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Intent intent=new Intent(MainActivity.this,MyService.class);
+        startService(intent);
+        loadState();
+        stopService(intent);
 
+    }
 }
 
 

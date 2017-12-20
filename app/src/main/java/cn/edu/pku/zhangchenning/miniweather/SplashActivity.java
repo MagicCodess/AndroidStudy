@@ -47,7 +47,7 @@ public class SplashActivity extends AppCompatActivity {
         if (first) {
             mHandler.sendEmptyMessageDelayed(GO_GUIDE, 10);
         } else {
-            mHandler.sendEmptyMessageDelayed(GO_GUIDE, 10);
+            mHandler.sendEmptyMessageDelayed(GO_HOME, 10);
         }
     }
 }

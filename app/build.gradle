@@ -8,9 +8,27 @@ android {
         minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
-        versionName "0.7"
+        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        debug {
+            // 配置debug版本的数字签名证书
+            storeFile file("C:\\Users\\Arthur\\.key\\key.jks")
+            storePassword "qwerty"
+            keyAlias "key0"
+            keyPassword "qwerty"
+        }
+        release {
+            // 配置release版本的数字签名证书(为了方便，这里的release版本和debug版本共用一个数字签名证书)
+            storeFile file("C:\\Users\\Arthur\\.key\\key.jks")
+            storePassword "qwerty"
+            keyAlias "key0"
+            keyPassword "qwerty"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

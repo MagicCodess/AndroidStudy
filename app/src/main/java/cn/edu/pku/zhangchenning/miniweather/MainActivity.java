@@ -104,7 +104,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     String city;
     String imagePath;
 
-
+    public TodayWeather todayWeather = null;
 
     private static final int UPDATE_TODAY_WEATHER = 1;
     private static final int UPDATE_TODAY_WEATHER_BUTTON = 2;
@@ -168,7 +168,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
 
         initView();
-
+        Intent intent=new Intent(MainActivity.this,MyService.class);
+        startService(intent);
         viewPager = (ViewPager) findViewById(R.id.imaster_viewpager);      //banner位
         banner_top = (ImageView) findViewById(R.id.percentage);    //banner进度
         banner_top.setImageResource(R.drawable.banner_select0);     //Set image
@@ -485,7 +486,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     }
     //parse XML data
     private TodayWeather parseXML(String xmldata) {
-        TodayWeather todayWeather = null;
+
         int fengxiangCount = 0;
         int fengliCount = 0;
         int dateCount = 0;
@@ -785,14 +786,18 @@ public class MainActivity extends Activity implements View.OnClickListener{
             city_name_Tv.setText(todayWeather.getCity() + "天气");
             cityTv.setText(todayWeather.getCity());
             timeTv.setText(todayWeather.getUpdatetime() + "发布");
+            MyApplication.getInstance().week=todayWeather.getDate();
             humidityTv.setText("湿度：" + todayWeather.getShidu());
             pmDataTv.setText(todayWeather.getPm25());
             pmQualityTv.setText(todayWeather.getQuality());
             weekTv.setText(todayWeather.getDate());
+            MyApplication.getInstance().date=todayWeather.getHigh() + "~" + todayWeather.getLow();
             temperatureTv.setText(todayWeather.getHigh() + "~" + todayWeather.getLow());
             temperatureTv0.setText("温度："+todayWeather.getWendu()+"℃");
             climateTv.setText(todayWeather.getType());
+            MyApplication.getInstance().climate=todayWeather.getType();
             windTv.setText("风力:" + todayWeather.getFengli());
+            MyApplication.getInstance().wind=todayWeather.getFengli();
             dateTv2.setText(todayWeather.getDate2());
             dateTv3.setText(todayWeather.getDate3());
             dateTv4.setText(todayWeather.getDate4());
@@ -819,6 +824,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             windTv7.setText("No Data");
             //weatherImg.setImageResource(R.drawable.biz_plugin_weather_baoyu);
             setWeatherImg(weatherImg,todayWeather.getType());
+            MyApplication.getInstance().type=todayWeather.getType();
             if (todayWeather.getType2()!=null){
                 setWeatherImg(weatherImg2,todayWeather.getType2());
             }
@@ -933,9 +939,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
     protected void onRestart() {
         super.onRestart();
         Intent intent=new Intent(MainActivity.this,MyService.class);
-        startService(intent);
-        loadState();
-        stopService(intent);
+//        startService(intent);
+//        loadState();
+//        stopService(intent);
 
     }
 }

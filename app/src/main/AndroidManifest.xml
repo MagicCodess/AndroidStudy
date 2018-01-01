@@ -37,19 +37,27 @@
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity" >
+        <activity android:name=".SplashActivity">
             <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="MiniWeather">
-
-        </activity>
+            android:label="MiniWeather" />
         <activity android:name=".SelectCity" />
+
+        <receiver android:name=".NewAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGEAT_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/new_app_widget_info" />
+        </receiver>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
@@ -58,8 +66,13 @@
         <service
             android:name=".MyService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true" />
+        <receiver android:name=".MyReceive">
+            <intent-filter>
+                <action
+                    android:name="android.provider.action.NewBroad"/>
+            </intent-filter>
+         </receiver>
 
         <!-- <provider -->
         <!-- android:name="android.support.v4.content.FileProvider" -->
@@ -71,7 +84,17 @@
         <!-- android:resource="@xml/filepaths" /> -->
         <!-- </provider> -->
 
-        <activity android:name=".WelcomeActivity"></activity>
+        <activity android:name=".WelcomeActivity" />
+
+        <receiver android:name=".NewAppWidgetWeather">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/new_app_widget_weather_info" />
+        </receiver>
     </application>
 
 </manifest>

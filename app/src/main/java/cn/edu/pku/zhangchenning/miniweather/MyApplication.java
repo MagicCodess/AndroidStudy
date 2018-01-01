@@ -23,6 +23,7 @@ public class MyApplication extends Application{
     private static MyApplication mApplication;
     public CityDB mCityDB;
     private List<City> mCityList;
+    public String week="2日 星期二",date="4℃~6℃",climate="晴",wind="风力：2级",type="晴";
 
     public void onCreate(){
         super.onCreate();
